@@ -1,5 +1,6 @@
 plugins {
-    id "fabric-loom" version "1.6-SNAPSHOT"
+    id "fabric-loom" version "1.7-SNAPSHOT"
+    id "maven-publish"
 }
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
@@ -37,4 +38,19 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding("UTF-8")
+}
+
+publishing {
+    publications {
+        myLibrary(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'myRepo'
+            url = "its fucking private bro"
+        }
+    }
 }
