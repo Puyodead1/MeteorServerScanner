@@ -1,41 +1,30 @@
 {
   "schemaVersion": 1,
-  "id": "serverseeker",
+  "id": "serverscanner",
   "version": "${version}",
-  "name": "ServerSeeker",
-  "description": "Search for basically any Minecraft server that exists. Basically copenheimer, but public and better.",
+  "name": "ServerScanner",
+  "description": "ServerScanner fork for cornbreads server scanner",
   "authors": [
-    "DAMcraft"
+    "Puyodead1",
+    "DAMCraft"
   ],
-  "contact": {
-    "repo": "https://github.com/DAMcraft/MeteorServerSeeker/",
-    "discord": "https://discord.gg/serverseeker-1087081486747971705",
-    "homepage": "https://serverseeker.net/",
-    "issues": "https://github.com/DAMcraft/MeteorServerSeeker/issues",
-    "sources": "https://github.com/DAMcraft/MeteorServerSeeker/"
-  },
-  "icon": "assets/serverseeker/icon.png",
+  "icon": "assets/serverscanner/icon.png",
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "de.damcraft.serverseeker.ServerSeeker"
+      "me.puyodead1.serverscanner.ServerScanner"
     ]
   },
   "mixins": [
-    "serverseeker.mixins.json"
+    "serverscanner.mixins.json"
   ],
   "custom": {
     "meteor-client:color": "153,45,34",
-    "github:sha": "${gh_hash}",
-    "modmenu": {
-      "links": {
-        "modmenu.discord": "https://discord.gg/serverseeker-1087081486747971705"
-      }
-    }
+    "github:sha": "${gh_hash}"
   },
   "depends": {
     "java": ">=21",
-    "minecraft": ">=1.20.6"
+    "minecraft": ">=1.21"
   },
   "recommends": {
     "meteor-client": "*"

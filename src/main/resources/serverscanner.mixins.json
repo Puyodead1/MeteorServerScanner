@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "me.puyodead1.serverscanner.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "MultiplayerScreenAccessor",
+    "MultiplayerScreenMixin",
+    "TitleScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "HandshakeC2SAccessor",
+    "HandshakeC2SMixin"
+  ]
+}
