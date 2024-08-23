@@ -9,13 +9,51 @@ public class ServersRequest {
     private final JsonObject params = new JsonObject();
 
     public enum Software {
-        Any, Bukkit, Spigot, Paper, Vanilla
+        Any, Bukkit, Spigot, Paper, Vanilla, Forge, Fabric
     }
 
     private Software software;
 
+    private void addOrFilter(JsonObject object) {
+        JsonArray filters;
+
+        // check for an or
+        if (params.has("$or")) {
+            // get the existing or
+            filters = params.get("$or").getAsJsonArray();
+            System.out.println("Found existing $or");
+        } else {
+            // create new
+            filters = new JsonArray();
+            System.out.println("Creating new $or");
+        }
+
+        filters.add(object);
+
+        this.params.add("$or", filters);
+    }
+
+    private void addAndFilter(JsonObject object) {
+        JsonArray filters;
+
+        // check for an or
+        if (params.has("$and")) {
+            // get the existing and
+            filters = params.get("$and").getAsJsonArray();
+            System.out.println("Found existing $and");
+        } else {
+            // create new
+            filters = new JsonArray();
+            System.out.println("Creating new and");
+        }
+
+        filters.add(object);
+
+        this.params.add("$and", filters);
+    }
+
     public void setCountryCode(String cc) {
-        this.params.addProperty("geo.country", cc);
+        this.params.addProperty("geo.country", cc.toUpperCase());
     }
 
     public void setOrg(String org) {
@@ -32,7 +70,6 @@ public class ServersRequest {
 
     public void setDescription(String description) {
         if (description.isBlank() || description.isEmpty()) return;
-        JsonArray filterArray = new JsonArray();
 
         JsonObject regexFilter = new JsonObject();
         regexFilter.addProperty("$regex", description);
@@ -47,11 +84,9 @@ public class ServersRequest {
         JsonObject filter3 = new JsonObject();
         filter3.add("description.extra.text", regexFilter);
 
-        filterArray.add(filter1);
-        filterArray.add(filter2);
-        filterArray.add(filter3);
-
-        this.params.add("$or", filterArray);
+        addOrFilter(filter1);
+        addOrFilter(filter2);
+        addOrFilter(filter3);
     }
 
     public void setMaxPlayers(Integer exact) {
@@ -97,37 +132,40 @@ public class ServersRequest {
 
     // ex: paper 1.21.1
     public void setVersionName(String versionName) {
+        // {"version.name": regexFilter}
         JsonObject filter = new JsonObject();
-        filter.addProperty("$regex", versionName);
-        filter.addProperty("$options", "i");
 
-        this.params.add("version.name", filter);
+        JsonObject regexFilter = new JsonObject();
+        regexFilter.addProperty("$regex", versionName);
+        regexFilter.addProperty("$options", "i");
+
+        // add the regex filter object to the filter object
+        filter.add("version.name", regexFilter);
+
+        // append the filter
+        addAndFilter(filter);
     }
 
     // ex: paper 1.21.1
     public void setSoftware(Software software) {
+        // {"version.name": regexFilter}
         JsonObject filter = new JsonObject();
-        filter.addProperty("$regex", software.name());
-        filter.addProperty("$options", "i");
 
-        this.params.add("version.name", filter);
+        JsonObject regexFilter = new JsonObject();
+        // not sure if this is the best idea or not, but most if not all but vanilla should work here
+
+        regexFilter.addProperty("$regex", String.format("^%s", software.name()));
+        regexFilter.addProperty("$options", "i");
+
+        // add the regex filter object to the filter object
+        filter.add("version.name", regexFilter);
+
+        // append the filter
+        addAndFilter(filter);
     }
 
     public void setIgnoreModded(Boolean ignore) {
-        JsonArray filter;
-
-        // check for an or
-        if (params.has("$or")) {
-            // get the existing or
-            filter = params.get("$or").getAsJsonArray();
-
-            // remove the old field so we can re-add it later
-            this.params.remove("$or");
-        } else {
-            // create new
-            filter = new JsonArray();
-        }
-
+        // ignore forgedata
         JsonObject notExistFilter = new JsonObject();
         notExistFilter.addProperty("$exists", false);
 
@@ -137,11 +175,16 @@ public class ServersRequest {
         JsonObject filter2 = new JsonObject();
         filter2.add("hasForgeData", notExistFilter);
 
-        filter.add(filter1);
-        filter.add(filter2);
+        // do it again for modinfo
+        JsonObject notExistFilter2 = new JsonObject();
+        notExistFilter2.addProperty("$exists", false);
 
+        JsonObject filter3 = new JsonObject();
+        filter3.add("modinfo", notExistFilter);
 
-        this.params.add("$or", filter);
+        addOrFilter(filter1);
+        addOrFilter(filter2);
+        addOrFilter(filter3);
     }
 
 

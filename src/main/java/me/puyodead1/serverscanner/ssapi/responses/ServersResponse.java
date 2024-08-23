@@ -24,6 +24,16 @@ public class ServersResponse {
         public Integer protocol;
     }
 
+    public static class Mod {
+        public String modid;
+        public String version;
+    }
+
+    public static class ModInfo {
+        public String type; // ex: FML
+        public List<Mod> modlist;
+    }
+
     public static class Geo {
         public String country;
         public String city;
@@ -46,6 +56,7 @@ public class ServersResponse {
         public Boolean previewsChat;
         public Geo geo;
         public String org;
+        public ModInfo modinfo;
 
         public String getServerAddress() {
             return String.format("%s:%d", this.ip, this.port);
