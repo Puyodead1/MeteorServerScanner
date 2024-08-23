@@ -36,7 +36,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
                 }
             )
                 .position(150, 3)
-                .width(80)
+                .width(90)
                 .build()
         );
 
@@ -53,8 +53,8 @@ public abstract class MultiplayerScreenMixin extends Screen {
                     }
                 }
             )
-                .position(150 + 80 + 5, 3)
-                .width(80)
+                .position(150 + 90 + 5, 3)
+                .width(90)
                 .build()
         );
     }
