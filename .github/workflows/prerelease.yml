@@ -31,6 +31,11 @@ jobs:
         with:
           path: build/libs/*.jar
 
+      - name: Delete latest release
+        uses: liudonghua123/delete-release-action@v1
+        with:
+          release_name: 'latest'
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
