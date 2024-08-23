@@ -2,6 +2,7 @@ package me.puyodead1.serverscanner.mixin;
 
 import me.puyodead1.serverscanner.gui.GetInfoScreen;
 import me.puyodead1.serverscanner.gui.ServerScannerScreen;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
@@ -19,6 +20,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
     @Shadow
     protected MultiplayerServerListWidget serverListWidget;
     private ButtonWidget getInfoButton;
+    private int posX = FabricLoader.getInstance().isModLoaded("serverseeker") ? 340 : 150;
 
     protected MultiplayerScreenMixin() {
         super(null);
@@ -35,7 +37,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
                     this.client.setScreen(new ServerScannerScreen((MultiplayerScreen) (Object) this));
                 }
             )
-                .position(150, 3)
+                .position(posX, 3)
                 .width(90)
                 .build()
         );
@@ -53,7 +55,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
                     }
                 }
             )
-                .position(150 + 90 + 5, 3)
+                .position(posX + 90 + 5, 3)
                 .width(90)
                 .build()
         );
