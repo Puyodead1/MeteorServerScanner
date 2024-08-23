@@ -11,41 +11,41 @@ NEW_COMMIT = os.environ.get('NEW_COMMIT')
 
 
 def main():
-    directory = os.listdir('./build/libs')
-    jar = [file for file in directory if file.endswith('.jar')][0]
-    version = jar.split('-')[2].split('.jar')[0]
+#     directory = os.listdir('./build/libs')
+#     jar = [file for file in directory if file.endswith('.jar')][0]
+#     version = jar.split('-')[2].split('.jar')[0]
 
-    virus_total_link = None
-    if VIRUSTOTAL_API_KEY is not None:
-        virus_total_req = requests.post(
-            f'https://www.virustotal.com/api/v3/files',
-            files={'file': (jar, open(f'./build/libs/{jar}', 'rb'), 'application/jar')},
-            headers={
-                'x-apikey': VIRUSTOTAL_API_KEY,
-                'accept': 'application/json'
-            }
-        )
-        if virus_total_req.status_code == 200:
-            virus_total_id = virus_total_req.json()['data']['id']
-            virus_total_link = f'https://www.virustotal.com/gui/file-analysis/{virus_total_id}/detection'
+#     virus_total_link = None
+#     if VIRUSTOTAL_API_KEY is not None:
+#         virus_total_req = requests.post(
+#             f'https://www.virustotal.com/api/v3/files',
+#             files={'file': (jar, open(f'./build/libs/{jar}', 'rb'), 'application/jar')},
+#             headers={
+#                 'x-apikey': VIRUSTOTAL_API_KEY,
+#                 'accept': 'application/json'
+#             }
+#         )
+#         if virus_total_req.status_code == 200:
+#             virus_total_id = virus_total_req.json()['data']['id']
+#             virus_total_link = f'https://www.virustotal.com/gui/file-analysis/{virus_total_id}/detection'
 
-    changes = {}
-    changes_message = '**Changes:**\n'
-    html_url = None
+#     changes = {}
+#     changes_message = '**Changes:**\n'
+#     html_url = None
     if GITHUB_TOKEN is not None:
-        github_req = requests.get(
-            f'https://api.github.com/repos/Puyodead1/MeteorServerScanner/compare/{LAST_COMMIT}...{NEW_COMMIT}',
-            headers={
-                'Authorization': f'Bearer {GITHUB_TOKEN}'
-            }
-        )
-        if github_req.status_code == 200:
-            for commit in github_req.json().get('commits', []):
-                sha = commit['sha']
-                message = commit['commit']['message']
-                changes[sha] = message
-                changes_message += (f'- [`{sha[:7]}`](https://github.com/Puyodead1/MeteorServerScanner/commit/{sha}/) '
-                                    f'{message}\n')
+#         github_req = requests.get(
+#             f'https://api.github.com/repos/Puyodead1/MeteorServerScanner/compare/{LAST_COMMIT}...{NEW_COMMIT}',
+#             headers={
+#                 'Authorization': f'Bearer {GITHUB_TOKEN}'
+#             }
+#         )
+#         if github_req.status_code == 200:
+#             for commit in github_req.json().get('commits', []):
+#                 sha = commit['sha']
+#                 message = commit['commit']['message']
+#                 changes[sha] = message
+#                 changes_message += (f'- [`{sha[:7]}`](https://github.com/Puyodead1/MeteorServerScanner/commit/{sha}/) '
+#                                     f'{message}\n')
 
         # Delete old release
         get_tags = requests.get(
@@ -65,33 +65,33 @@ def main():
             )
 
         # New release
-        req = requests.post(
-            f"https://api.github.com/repos/Puyodead1/MeteorServerScanner/releases",
-            headers={
-                'Authorization': f'Bearer {GITHUB_TOKEN}'
-            },
-            json={
-                "tag_name": f"latest",
-                "target_commitish": f"{NEW_COMMIT}",
-                "name": f"Dev Build (Based on {version})",
-                "body": changes_message + f"\nVirusTotal: {virus_total_link}",
-                "draft": False,
-                "prerelease": True,
-                "make_latest": 'true'
-            }
-        )
-        release_id = req.json()['id']
-        html_url = req.json()['html_url']
-
-        # Upload jar
-        requests.post(
-            f"https://uploads.github.com/repos/Puyodead1/MeteorServerScanner/releases/{release_id}/assets?name={jar}",
-            headers={
-                'Authorization': f'Bearer {GITHUB_TOKEN}',
-                'Content-Type': 'application/jar'
-            },
-            data=open(f'./build/libs/{jar}', 'rb')
-        )
+#         req = requests.post(
+#             f"https://api.github.com/repos/Puyodead1/MeteorServerScanner/releases",
+#             headers={
+#                 'Authorization': f'Bearer {GITHUB_TOKEN}'
+#             },
+#             json={
+#                 "tag_name": f"latest",
+#                 "target_commitish": f"{NEW_COMMIT}",
+#                 "name": f"Dev Build (Based on {version})",
+#                 "body": changes_message,
+#                 "draft": False,
+#                 "prerelease": True,
+#                 "make_latest": 'true'
+#             }
+#         )
+#         release_id = req.json()['id']
+#         html_url = req.json()['html_url']
+#
+#         # Upload jar
+#         requests.post(
+#             f"https://uploads.github.com/repos/Puyodead1/MeteorServerScanner/releases/{release_id}/assets?name={jar}",
+#             headers={
+#                 'Authorization': f'Bearer {GITHUB_TOKEN}',
+#                 'Content-Type': 'application/jar'
+#             },
+#             data=open(f'./build/libs/{jar}', 'rb')
+#         )
 
 #     if DISCORD_WEBHOOK is not None:
 #         requests.post(
