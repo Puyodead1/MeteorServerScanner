@@ -18,34 +18,13 @@ jobs:
       - name: Build
         run: ./gradlew build -Pgithub_sha=${{ github.sha }}
 
-      - name: Get jar version
-        run: |
-          jar=$(ls ./build/libs/*.jar | head -n 1)
-          version=$(basename "$jar" | cut -d'-' -f3 | sed 's/.jar$//')
-          echo "Found jar file: $jar"
-          echo "Version: $version"
-          echo "VERSION=$version" >> $GITHUB_ENV
-
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          path: build/libs/*.jar
-
       - name: Run python script
         run: |
           pip3 install -r ./.github/workflows/requirements.txt
           python3 ./.github/workflows/prerelease.py
-
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          files: build/libs/*.jar
-          fail_on_unmatched_files: true
-          generate_release_notes: true
-          make_latest: true
-          tag_name: "latest"
-          prerelease: true
-          name: "Dev Build (Based on ${{ env.VERSION }})"
+          VIRUSTOTAL_API_KEY: ${{ secrets.VT_API_KEY }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          LAST_COMMIT: ${{ github.event.before }}
+          NEW_COMMIT: ${{ github.event.after }}
