@@ -9,9 +9,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "HandshakeC2SAccessor",
-    "HandshakeC2SMixin"
-  ]
+  }
 }

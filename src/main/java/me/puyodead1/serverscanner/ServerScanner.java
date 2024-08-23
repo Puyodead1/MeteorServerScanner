@@ -8,7 +8,6 @@ import me.puyodead1.serverscanner.country.Countries;
 import me.puyodead1.serverscanner.country.Country;
 import me.puyodead1.serverscanner.country.CountrySetting;
 import me.puyodead1.serverscanner.hud.HistoricPlayersHud;
-import me.puyodead1.serverscanner.modules.BungeeSpoofModule;
 import me.puyodead1.serverscanner.ssapi.responses.ServersResponse;
 import me.puyodead1.serverscanner.utils.DescriptionDeserializer;
 import me.puyodead1.serverscanner.utils.HistoricPlayersUpdater;
@@ -48,7 +47,6 @@ public class ServerScanner extends MeteorAddon {
         // Load countries
         Countries.init();
 
-        Modules.get().add(new BungeeSpoofModule());
         Hud.get().register(HistoricPlayersHud.INFO);
 
         SettingsWidgetFactory.registerCustomFactory(CountrySetting.class, (theme) -> (table, setting) -> {
