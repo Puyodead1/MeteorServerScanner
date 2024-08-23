@@ -93,25 +93,25 @@ def main():
             data=open(f'./build/libs/{jar}', 'rb')
         )
 
-#     if DISCORD_WEBHOOK is not None:
-#         requests.post(
-#             DISCORD_WEBHOOK,
-#             files={
-#                 jar: open(f'./build/libs/{jar}', 'rb'),
-#                 'payload_json': (None, json.dumps({
-#                     'embeds': [
-#                         {
-#                             'title': "New Dev Build!",
-#                             'description': f'A new dev build based on {version} has been released!\n'
-#                                            f'[VirusTotal]({virus_total_link})\n'
-#                                            f'{changes_message}\n'
-#                                            f'[View on GitHub]({html_url})',
-#                             'color': 0x14c384
-#                         }
-#                     ]
-#                 }))
-#             }
-#         )
+    if DISCORD_WEBHOOK is not None:
+        requests.post(
+            DISCORD_WEBHOOK,
+            files={
+                jar: open(f'./build/libs/{jar}', 'rb'),
+                'payload_json': (None, json.dumps({
+                    'embeds': [
+                        {
+                            'title': "New Dev Build!",
+                            'description': f'A new dev build based on {version} has been released!\n'
+                                           f'[VirusTotal]({virus_total_link})\n'
+                                           f'{changes_message}\n'
+                                           f'[View on GitHub]({html_url})',
+                            'color': 0x14c384
+                        }
+                    ]
+                }))
+            }
+        )
 
 
 if __name__ == '__main__':
