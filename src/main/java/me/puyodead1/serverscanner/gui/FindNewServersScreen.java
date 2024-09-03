@@ -84,11 +84,6 @@ public class FindNewServersScreen extends WindowScreen {
         }
     }
 
-    // Didn't have a better name
-    public enum GeoSearchType {
-        None, Country
-    }
-
     private final Settings settings = new Settings();
     private final SettingGroup sg = settings.getDefaultGroup();
     WContainer settingsContainer;
@@ -116,7 +111,7 @@ public class FindNewServersScreen extends WindowScreen {
 
     private final Setting<String> descriptionSetting = sg.add(new StringSetting.Builder().name("MOTD").description("What the MOTD of the server should contain (empty for any)").defaultValue("").build());
 
-    private final Setting<ServersRequest.Software> softwareSetting = sg.add(new EnumSetting.Builder<ServersRequest.Software>().name("software").description("The server software the servers should have").defaultValue(ServersRequest.Software.Any).build());
+    private final Setting<ServersRequest.Software> softwareSetting = sg.add(new EnumSetting.Builder<ServersRequest.Software>().name("software").description("The server software the servers should have. This doesn't work very well.").defaultValue(ServersRequest.Software.Any).build());
 
     private final Setting<Version> versionSetting = sg.add(new EnumSetting.Builder<Version>().name("version").description("The protocol version the servers should have").defaultValue(Version.Current).build());
 
@@ -126,12 +121,11 @@ public class FindNewServersScreen extends WindowScreen {
 
     private final Setting<Boolean> onlineOnlySetting = sg.add(new BoolSetting.Builder().name("online-only").description("Whether to only show servers that are online").defaultValue(true).build());
 
-    private final Setting<Boolean> ignoreModded = sg.add(new BoolSetting.Builder().name("ignore-modded").description("Will not give you servers where mods have been detected").defaultValue(true).build());
+    private final Setting<Boolean> ignoreModded = sg.add(new BoolSetting.Builder().name("ignore-modded").description("Will not give you servers where mods have been detected. This doesn't work well.").defaultValue(true).build());
 
-    private final Setting<GeoSearchType> geoSearchTypeSetting = sg.add(new EnumSetting.Builder<GeoSearchType>().name("geo-search-type").description("Whether to search by ASN or country code").defaultValue(GeoSearchType.None).build());
+    private final Setting<Boolean> noWhitelist = sg.add(new BoolSetting.Builder().name("no-whitelist").description("Whether to only show servers are not whitelisted.").defaultValue(true).build());
 
-
-    private final Setting<Country> countrySetting = sg.add(new CountrySetting.Builder().name("country").description("The country the server should be located in").defaultValue(ServerScanner.COUNTRY_MAP.get("UN")).visible(() -> geoSearchTypeSetting.get() == GeoSearchType.Country).build());
+    private final Setting<Country> countrySetting = sg.add(new CountrySetting.Builder().name("country").description("The country the server should be located in").defaultValue(ServerScanner.COUNTRY_MAP.get("UN")).build());
 
     private final Setting<Integer> limitSetting = sg.add(new IntSetting.Builder().name("limit").description("Number of results to return").defaultValue(100).min(0).max(100).build());
 
@@ -217,8 +211,13 @@ public class FindNewServersScreen extends WindowScreen {
                 request.setOnlineAfter((int) oneHourAgo);
             }
 
+            if(noWhitelist.get()) {
+                request.setWhitelist(false); // servers with no whitelist
+            } else {
+                request.setWhitelist(null); // unset, show any
+            }
+
             if (ignoreModded.get()) request.setIgnoreModded(true);
-//            if (onlyBungeeSpoofable.get()) request.setOnlyBungeeSpoofable(true);
 
 
             this.locked = true;
@@ -232,7 +231,7 @@ public class FindNewServersScreen extends WindowScreen {
                 String requestJson = request.json();
                 String encoded = URLEncoder.encode(requestJson, StandardCharsets.UTF_8);
                 String url = String.format("https://api.cornbread2100.com/servers?limit=%s&query=%s", limitSetting.get(), encoded);
-                System.out.println(String.format("Requesting URL: %s", url));
+                System.out.printf("Requesting URL: %s%n", url);
                 String jsonResp = SmallHttp.get(url);
 
                 Type listType = new TypeToken<ArrayList<ServersResponse.Server>>() {

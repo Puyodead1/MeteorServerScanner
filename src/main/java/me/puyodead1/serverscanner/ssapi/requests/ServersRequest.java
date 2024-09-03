@@ -187,6 +187,10 @@ public class ServersRequest {
         addOrFilter(filter3);
     }
 
+    public void setWhitelist(Boolean whitelist) {
+        this.params.addProperty("whitelist", whitelist);
+    }
+
 
     public String json() {
         return gson.toJson(params);
