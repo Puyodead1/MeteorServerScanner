@@ -84,9 +84,17 @@ public class ServersRequest {
         JsonObject filter3 = new JsonObject();
         filter3.add("description.extra.text", regexFilter);
 
-        addOrFilter(filter1);
-        addOrFilter(filter2);
-        addOrFilter(filter3);
+        JsonArray descriptionFilters = new JsonArray();
+        descriptionFilters.add(filter1);
+        descriptionFilters.add(filter2);
+        descriptionFilters.add(filter3);
+
+        // Create an $or with the description filters
+        JsonObject orFilter = new JsonObject();
+        orFilter.add("$or", descriptionFilters);
+
+        // Add to $and
+        addAndFilter(orFilter);
     }
 
     public void setMaxPlayers(Integer exact) {
@@ -182,9 +190,16 @@ public class ServersRequest {
         JsonObject filter3 = new JsonObject();
         filter3.add("modinfo", notExistFilter);
 
-        addOrFilter(filter1);
-        addOrFilter(filter2);
-        addOrFilter(filter3);
+        JsonArray modFilters = new JsonArray();
+
+        modFilters.add(filter1);
+        modFilters.add(filter2);
+        modFilters.add(filter3);
+
+        JsonObject orFilter = new JsonObject();
+        orFilter.add("$or", modFilters);
+
+        addAndFilter(orFilter);
     }
 
     public void setWhitelist(Boolean whitelist) {
